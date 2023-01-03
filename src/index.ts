@@ -1,29 +1,30 @@
-import express, { Express, Request, Response } from 'express';
-import { AddressInfo } from 'net'
+import express, { Express, Request, Response } from 'express'
+import { ShortUrlRoute } from './route/ShortUrlRoute'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
+import mongoose from 'mongoose'
 
 // init project
 dotenv.config()
 const app: Express = express()
+const router = express.Router()
 const port = process.env.PORT || 3000
-
-function hasCode(string: String): number {
-    var hash = 0,
-        i, chr;
-    if (string.length === 0) return hash;
-    for (i = 0; i < string.length; i++) {
-        chr = string.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32bit integer
+mongoose.connect(process.env.MONGO_URI!, function (err) {
+    if (err) {
+        console.error(err)
+    } else {
+        console.log('Database connection successful')
     }
-    return hash;
-}
+})
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC
 app.use(cors({ optionsSuccessStatus: 200 })) // some legacy browsers choke on 204
+
+// enables express json parser
+app.use(express.urlencoded())
+app.use(express.json())
 
 // http://expressjs.com/en/starter/static-files.html
 app.use('/public', express.static(path.join(__dirname, '../public')))
@@ -33,9 +34,8 @@ app.get('/', function (_req: Request, res: Response) {
     res.sendFile(path.join(__dirname, '../views/index.html'))
 })
 
-app.post('/api/shorturl', function (_req: Request, res: Response) {
-    res.json({ message: "success" })
-})
+// Use Router
+app.use('/api/', ShortUrlRoute.route(router))
 
 // listen for requests :)
 app.listen(port, function () {
