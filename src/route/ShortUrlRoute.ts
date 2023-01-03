@@ -14,6 +14,15 @@ export class ShortUrlRoute {
       .route('/shorturl')
       .post(UrlMiddleware.validate, ShortUrlController.shortenUrl)
 
+    /**
+   * @route POST /api/shorturl/:short_url
+   * @param { string } example.body.short_url
+   * @produces application/json
+   */
+    router
+      .route('/shorturl/:shortUrl')
+      .get(ShortUrlController.getShortUrl)
+
     return router
   }
 }

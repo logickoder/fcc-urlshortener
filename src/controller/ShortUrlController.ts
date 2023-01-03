@@ -4,7 +4,7 @@ import { Url } from '../data/model/Url'
 
 export class ShortUrlController {
     static async shortenUrl(req: Request, res: Response) {
-        const url = req.body.url;
+        const url = req.body.url
 
         try {
             let shortUrl: string
@@ -26,6 +26,17 @@ export class ShortUrlController {
         } catch (err) {
             console.log(err);
             res.status(500).json('Server Error');
+        }
+    }
+
+    static async getShortUrl(req: Request, res: Response) {
+        const shortUrl = req.params.shortUrl
+        let url = await Url.findOne({ shortUrl: shortUrl })
+
+        if (url) {
+            res.redirect(url.originalUrl)
+        } else {
+            res.status(500).json('Server Error')
         }
     }
 }

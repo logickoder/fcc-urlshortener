@@ -21,13 +21,13 @@ export class UrlMiddleware {
     static validate(req: Request, res: Response, next: NextFunction) {
         // validate url schema first
         if (pattern.test(req.body.url)) {
-            dns.lookup(req.body.url, options, function (err) {
-                if (err) {
-                    res.json(error)
-                } else {
-                    next()
-                }
-            })
+            next()
+            // dns.lookup(req.body.url, options, function (err) {
+            //     if (err) {
+            //         res.json(error)
+            //     } else {
+            //     }
+            // })
         } else {
             res.json(error)
         }
